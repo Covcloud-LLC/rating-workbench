@@ -8,3 +8,29 @@ wheels/
 
 # Virtual environments
 .venv
+venv/
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+frontend/.env.local
+
+# Testing
+.coverage
+.pytest_cache
+htmlcov/
+
+# Logs
+*.log
+npm-debug.log*
