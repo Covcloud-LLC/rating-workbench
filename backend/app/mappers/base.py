@@ -31,7 +31,6 @@ class PolicyMapper(ABC, Generic[CustomModelT]):
         Returns:
             Common storage model instance
         """
-        pass
 
     @abstractmethod
     def to_custom(self, common: PolicyTransactionCommon) -> CustomModelT:
@@ -44,7 +43,6 @@ class PolicyMapper(ABC, Generic[CustomModelT]):
         Returns:
             Carrier-specific model instance
         """
-        pass
 
     @property
     @abstractmethod
@@ -55,7 +53,6 @@ class PolicyMapper(ABC, Generic[CustomModelT]):
         Returns:
             Carrier code string (e.g., "ACME", "STATE_FARM")
         """
-        pass
 
     @property
     @abstractmethod
@@ -66,4 +63,3 @@ class PolicyMapper(ABC, Generic[CustomModelT]):
         Returns:
             Product code string (e.g., "COMMERCIAL_PACKAGE", "PERSONAL_AUTO")
         """
-        pass

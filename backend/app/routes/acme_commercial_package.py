@@ -1,16 +1,16 @@
 """API routes for ACME Commercial Package policies."""
 
-from typing import List, Optional
-from fastapi import APIRouter, HTTPException, Depends, Query
 
+from fastapi import APIRouter, Depends, HTTPException, Query
+
+from ..mappers.acme_commercial_package_mapper import AcmeCommercialPackageMapper
 from ..models.custom.acme_commercial_package import (
     AcmeCommercialPackagePolicy,
     AcmeCommercialPackagePolicyCreate,
     AcmeCommercialPackagePolicyUpdate,
 )
-from ..services.policy_transaction_service import PolicyTransactionService
 from ..repositories.json_file import JSONFileRepository
-from ..mappers.acme_commercial_package_mapper import AcmeCommercialPackageMapper
+from ..services.policy_transaction_service import PolicyTransactionService
 
 router = APIRouter(prefix="/api/acme-commercial-package", tags=["ACME Commercial Package"])
 
@@ -22,14 +22,14 @@ def get_service() -> PolicyTransactionService[AcmeCommercialPackagePolicy]:
     return PolicyTransactionService(repository, mapper)
 
 
-@router.get("/policies", response_model=List[AcmeCommercialPackagePolicy])
+@router.get("/policies", response_model=list[AcmeCommercialPackagePolicy])
 async def list_policies(
     skip: int = Query(0, ge=0, description="Number of records to skip"),
     limit: int = Query(100, ge=1, le=1000, description="Maximum number of records"),
-    carrier_code: Optional[str] = Query(None, description="Filter by carrier code"),
-    status: Optional[str] = Query(None, description="Filter by status"),
+    carrier_code: str | None = Query(None, description="Filter by carrier code"),
+    status: str | None = Query(None, description="Filter by status"),
     service: PolicyTransactionService[AcmeCommercialPackagePolicy] = Depends(get_service),
-) -> List[AcmeCommercialPackagePolicy]:
+) -> list[AcmeCommercialPackagePolicy]:
     """
     List ACME Commercial Package policies with pagination.
 
@@ -126,8 +126,8 @@ async def delete_policy(
 
 @router.get("/policies/count", response_model=dict)
 async def count_policies(
-    carrier_code: Optional[str] = Query(None, description="Filter by carrier code"),
-    status: Optional[str] = Query(None, description="Filter by status"),
+    carrier_code: str | None = Query(None, description="Filter by carrier code"),
+    status: str | None = Query(None, description="Filter by status"),
     service: PolicyTransactionService[AcmeCommercialPackagePolicy] = Depends(get_service),
 ) -> dict:
     """

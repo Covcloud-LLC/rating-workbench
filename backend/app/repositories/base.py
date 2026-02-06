@@ -1,7 +1,7 @@
 """Abstract base repository interface."""
 
 from abc import ABC, abstractmethod
-from typing import Generic, TypeVar, Optional, List, Dict, Any
+from typing import Any, Generic, TypeVar
 
 T = TypeVar("T")
 
@@ -10,7 +10,7 @@ class BaseRepository(ABC, Generic[T]):
     """Abstract repository interface for data access operations."""
 
     @abstractmethod
-    async def get(self, id: str) -> Optional[T]:
+    async def get(self, id: str) -> T | None:
         """
         Retrieve a single item by ID.
 
@@ -20,12 +20,11 @@ class BaseRepository(ABC, Generic[T]):
         Returns:
             The item if found, None otherwise
         """
-        pass
 
     @abstractmethod
     async def list(
-        self, skip: int = 0, limit: int = 100, filters: Optional[Dict[str, Any]] = None
-    ) -> List[T]:
+        self, skip: int = 0, limit: int = 100, filters: dict[str, Any] | None = None
+    ) -> list[T]:
         """
         List items with pagination and optional filtering.
 
@@ -37,7 +36,6 @@ class BaseRepository(ABC, Generic[T]):
         Returns:
             List of items matching the criteria
         """
-        pass
 
     @abstractmethod
     async def create(self, item: T) -> T:
@@ -50,10 +48,9 @@ class BaseRepository(ABC, Generic[T]):
         Returns:
             The created item with generated ID
         """
-        pass
 
     @abstractmethod
-    async def update(self, id: str, item: T) -> Optional[T]:
+    async def update(self, id: str, item: T) -> T | None:
         """
         Update an existing item.
 
@@ -64,7 +61,6 @@ class BaseRepository(ABC, Generic[T]):
         Returns:
             The updated item if found, None otherwise
         """
-        pass
 
     @abstractmethod
     async def delete(self, id: str) -> bool:
@@ -77,10 +73,9 @@ class BaseRepository(ABC, Generic[T]):
         Returns:
             True if deleted, False if not found
         """
-        pass
 
     @abstractmethod
-    async def count(self, filters: Optional[Dict[str, Any]] = None) -> int:
+    async def count(self, filters: dict[str, Any] | None = None) -> int:
         """
         Count items matching optional filters.
 
@@ -90,7 +85,6 @@ class BaseRepository(ABC, Generic[T]):
         Returns:
             Number of items matching the criteria
         """
-        pass
 
     @abstractmethod
     async def exists(self, id: str) -> bool:
@@ -103,4 +97,3 @@ class BaseRepository(ABC, Generic[T]):
         Returns:
             True if exists, False otherwise
         """
-        pass

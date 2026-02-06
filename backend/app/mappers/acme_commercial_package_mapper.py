@@ -2,16 +2,16 @@
 
 from datetime import datetime
 from decimal import Decimal
-from typing import Dict, Any
+from typing import Any
 
-from .base import PolicyMapper
-from ..models.policy_transaction import PolicyTransactionCommon
 from ..models.custom.acme_commercial_package import (
     AcmeCommercialPackagePolicy,
-    Location,
-    Employee,
     Coverage,
+    Employee,
+    Location,
 )
+from ..models.policy_transaction import PolicyTransactionCommon
+from .base import PolicyMapper
 
 
 class AcmeCommercialPackageMapper(PolicyMapper[AcmeCommercialPackagePolicy]):
@@ -102,7 +102,7 @@ class AcmeCommercialPackageMapper(PolicyMapper[AcmeCommercialPackagePolicy]):
             updated_at=common.updated_at,
         )
 
-    def _serialize_custom_fields(self, custom: AcmeCommercialPackagePolicy) -> Dict[str, Any]:
+    def _serialize_custom_fields(self, custom: AcmeCommercialPackagePolicy) -> dict[str, Any]:
         """
         Serialize ACME-specific fields to dictionary for storage.
 
@@ -137,7 +137,7 @@ class AcmeCommercialPackageMapper(PolicyMapper[AcmeCommercialPackagePolicy]):
             "commission_rate": str(custom.commission_rate),
         }
 
-    def _deserialize_custom_fields(self, custom_fields: Dict[str, Any]) -> Dict[str, Any]:
+    def _deserialize_custom_fields(self, custom_fields: dict[str, Any]) -> dict[str, Any]:
         """
         Deserialize custom fields dictionary back to typed objects.
 

@@ -1,9 +1,10 @@
 """PolicyTransaction common model - used for storage across all NoSQL backends."""
 
-from datetime import datetime, date
-from typing import Optional, Dict, Any
+from datetime import date, datetime
 from decimal import Decimal
-from pydantic import BaseModel, Field, ConfigDict
+from typing import Any
+
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class PolicyTransactionCommon(BaseModel):
@@ -14,7 +15,7 @@ class PolicyTransactionCommon(BaseModel):
     """
 
     # Identity
-    id: Optional[str] = Field(None, description="Unique identifier")
+    id: str | None = Field(None, description="Unique identifier")
     policy_number: str = Field(..., min_length=1, max_length=100, description="Policy number")
 
     # Transaction metadata
@@ -41,13 +42,13 @@ class PolicyTransactionCommon(BaseModel):
 
     # Risk information
     risk_state: str = Field(..., min_length=2, max_length=2, description="State/province code")
-    risk_zip: Optional[str] = Field(None, max_length=10, description="ZIP/postal code")
+    risk_zip: str | None = Field(None, max_length=10, description="ZIP/postal code")
 
     # Status
     status: str = Field(..., description="Transaction status (quoted, bound, issued, cancelled)")
 
     # Custom carrier-specific fields stored as JSON
-    custom_fields: Dict[str, Any] = Field(
+    custom_fields: dict[str, Any] = Field(
         default_factory=dict, description="Carrier-specific custom fields"
     )
 
@@ -56,8 +57,8 @@ class PolicyTransactionCommon(BaseModel):
     updated_at: datetime = Field(
         default_factory=datetime.utcnow, description="Last update timestamp"
     )
-    created_by: Optional[str] = Field(None, description="User who created the record")
-    updated_by: Optional[str] = Field(None, description="User who last updated the record")
+    created_by: str | None = Field(None, description="User who created the record")
+    updated_by: str | None = Field(None, description="User who last updated the record")
 
     model_config = ConfigDict(
         json_encoders={Decimal: str},

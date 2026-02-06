@@ -1,6 +1,5 @@
 """Mapper registry for managing and retrieving mappers by carrier/product."""
 
-from typing import Dict, Tuple, Type, Optional
 
 from .base import PolicyMapper
 
@@ -15,9 +14,9 @@ class MapperRegistry:
 
     def __init__(self):
         """Initialize the mapper registry."""
-        self._mappers: Dict[Tuple[str, str], Type[PolicyMapper]] = {}
+        self._mappers: dict[tuple[str, str], type[PolicyMapper]] = {}
 
-    def register(self, mapper_class: Type[PolicyMapper]) -> None:
+    def register(self, mapper_class: type[PolicyMapper]) -> None:
         """
         Register a mapper class.
 
@@ -64,7 +63,7 @@ class MapperRegistry:
         mapper_class = self._mappers[key]
         return mapper_class()
 
-    def get_mapper_by_policy(self, policy_number: str) -> Optional[PolicyMapper]:
+    def get_mapper_by_policy(self, policy_number: str) -> PolicyMapper | None:
         """
         Get a mapper based on policy number prefix or pattern.
 
@@ -87,7 +86,7 @@ class MapperRegistry:
         # Add more patterns as needed
         return None
 
-    def list_registered(self) -> list[Tuple[str, str]]:
+    def list_registered(self) -> list[tuple[str, str]]:
         """
         List all registered carrier/product combinations.
 
@@ -115,7 +114,7 @@ def get_global_registry() -> MapperRegistry:
     return _global_registry
 
 
-def register_mapper(mapper_class: Type[PolicyMapper]) -> None:
+def register_mapper(mapper_class: type[PolicyMapper]) -> None:
     """
     Register a mapper in the global registry.
 

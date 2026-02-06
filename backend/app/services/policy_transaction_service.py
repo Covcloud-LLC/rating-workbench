@@ -1,10 +1,10 @@
 """Policy transaction service - uses mapper layer for model transformations."""
 
-from typing import Optional, List, Dict, Any, Generic, TypeVar
+from typing import Any, Generic, TypeVar
 
-from ..repositories.base import BaseRepository
-from ..models.policy_transaction import PolicyTransactionCommon
 from ..mappers.base import PolicyMapper
+from ..models.policy_transaction import PolicyTransactionCommon
+from ..repositories.base import BaseRepository
 
 # Type variable for custom model types
 CustomModelT = TypeVar("CustomModelT")
@@ -31,7 +31,7 @@ class PolicyTransactionService(Generic[CustomModelT]):
         self.repository = repository
         self.mapper = mapper
 
-    async def get(self, id: str) -> Optional[CustomModelT]:
+    async def get(self, id: str) -> CustomModelT | None:
         """
         Get a policy transaction by ID.
 
@@ -47,8 +47,8 @@ class PolicyTransactionService(Generic[CustomModelT]):
         return None
 
     async def list(
-        self, skip: int = 0, limit: int = 100, filters: Optional[Dict[str, Any]] = None
-    ) -> List[CustomModelT]:
+        self, skip: int = 0, limit: int = 100, filters: dict[str, Any] | None = None
+    ) -> list[CustomModelT]:
         """
         List policy transactions with pagination.
 
@@ -77,7 +77,7 @@ class PolicyTransactionService(Generic[CustomModelT]):
         created = await self.repository.create(common)
         return self.mapper.to_custom(created)
 
-    async def update(self, id: str, custom_model: CustomModelT) -> Optional[CustomModelT]:
+    async def update(self, id: str, custom_model: CustomModelT) -> CustomModelT | None:
         """
         Update an existing policy transaction.
 
@@ -106,7 +106,7 @@ class PolicyTransactionService(Generic[CustomModelT]):
         """
         return await self.repository.delete(id)
 
-    async def count(self, filters: Optional[Dict[str, Any]] = None) -> int:
+    async def count(self, filters: dict[str, Any] | None = None) -> int:
         """
         Count policy transactions.
 

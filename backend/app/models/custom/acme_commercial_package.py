@@ -1,10 +1,10 @@
 """ACME Commercial Package custom model - carrier-specific fields."""
 
-from datetime import datetime, date
-from typing import Optional, List
+from datetime import date, datetime
 from decimal import Decimal
-from pydantic import BaseModel, Field, ConfigDict
 from enum import Enum
+
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class PropertyType(str, Enum):
@@ -55,7 +55,7 @@ class Coverage(BaseModel):
 
     coverage_type: CoverageType = Field(..., description="Type of coverage")
     limit: Decimal = Field(..., ge=0, description="Coverage limit")
-    deductible: Optional[Decimal] = Field(None, ge=0, description="Deductible amount")
+    deductible: Decimal | None = Field(None, ge=0, description="Deductible amount")
     premium: Decimal = Field(..., ge=0, description="Premium for this coverage")
 
 
@@ -74,14 +74,14 @@ class AcmeCommercialPackagePolicyBase(BaseModel):
 
     # Business information
     business_name: str = Field(..., description="Legal business name")
-    dba_name: Optional[str] = Field(None, description="Doing business as name")
+    dba_name: str | None = Field(None, description="Doing business as name")
     business_type: str = Field(..., description="Type of business (LLC, Corp, etc)")
     industry_code: str = Field(..., description="Industry/NAICS code")
     years_in_business: int = Field(..., ge=0, description="Years in business")
 
     # Contact information
     contact_name: str = Field(..., description="Primary contact name")
-    contact_email: Optional[str] = Field(None, description="Contact email")
+    contact_email: str | None = Field(None, description="Contact email")
     contact_phone: str = Field(..., description="Contact phone")
 
     # ACME specific fields
@@ -91,9 +91,9 @@ class AcmeCommercialPackagePolicyBase(BaseModel):
     producer_name: str = Field(..., description="Producer/agent name")
 
     # Policy components
-    locations: List[Location] = Field(..., min_length=1, description="Business locations")
-    employees: List[Employee] = Field(default_factory=list, description="Employee classifications")
-    coverages: List[Coverage] = Field(..., min_length=1, description="Coverage selections")
+    locations: list[Location] = Field(..., min_length=1, description="Business locations")
+    employees: list[Employee] = Field(default_factory=list, description="Employee classifications")
+    coverages: list[Coverage] = Field(..., min_length=1, description="Coverage selections")
 
     # Financial
     total_premium: Decimal = Field(..., ge=0, description="Total package premium")
@@ -107,26 +107,25 @@ class AcmeCommercialPackagePolicyBase(BaseModel):
 class AcmeCommercialPackagePolicyCreate(AcmeCommercialPackagePolicyBase):
     """Schema for creating an ACME Commercial Package policy."""
 
-    pass
 
 
 class AcmeCommercialPackagePolicyUpdate(BaseModel):
     """Schema for updating an ACME Commercial Package policy (all fields optional)."""
 
-    policy_number: Optional[str] = None
-    effective_date: Optional[date] = None
-    expiration_date: Optional[date] = None
-    business_name: Optional[str] = None
-    dba_name: Optional[str] = None
-    contact_name: Optional[str] = None
-    contact_email: Optional[str] = None
-    contact_phone: Optional[str] = None
-    locations: Optional[List[Location]] = None
-    employees: Optional[List[Employee]] = None
-    coverages: Optional[List[Coverage]] = None
-    total_premium: Optional[Decimal] = None
-    payment_plan: Optional[str] = None
-    status: Optional[str] = None
+    policy_number: str | None = None
+    effective_date: date | None = None
+    expiration_date: date | None = None
+    business_name: str | None = None
+    dba_name: str | None = None
+    contact_name: str | None = None
+    contact_email: str | None = None
+    contact_phone: str | None = None
+    locations: list[Location] | None = None
+    employees: list[Employee] | None = None
+    coverages: list[Coverage] | None = None
+    total_premium: Decimal | None = None
+    payment_plan: str | None = None
+    status: str | None = None
 
 
 class AcmeCommercialPackagePolicy(AcmeCommercialPackagePolicyBase):

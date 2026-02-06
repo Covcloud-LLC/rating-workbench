@@ -2,12 +2,12 @@
 
 import json
 import uuid
-from pathlib import Path
-from typing import Optional, List, Dict, Any
 from datetime import datetime
+from pathlib import Path
+from typing import Any
 
-from .base import BaseRepository
 from ..models.policy_transaction import PolicyTransactionCommon
+from .base import BaseRepository
 
 
 class JSONFileRepository(BaseRepository[PolicyTransactionCommon]):
@@ -30,28 +30,28 @@ class JSONFileRepository(BaseRepository[PolicyTransactionCommon]):
         if not self.file_path.exists():
             self._write_data([])
 
-    def _read_data(self) -> List[Dict[str, Any]]:
+    def _read_data(self) -> list[dict[str, Any]]:
         """Read all data from JSON file."""
         try:
-            with open(self.file_path, "r") as f:
+            with open(self.file_path) as f:
                 return json.load(f)
         except (json.JSONDecodeError, FileNotFoundError):
             return []
 
-    def _write_data(self, data: List[Dict[str, Any]]):
+    def _write_data(self, data: list[dict[str, Any]]):
         """Write all data to JSON file."""
         with open(self.file_path, "w") as f:
             json.dump(data, f, indent=2, default=str)
 
-    def _to_dict(self, policy_transaction: PolicyTransactionCommon) -> Dict[str, Any]:
+    def _to_dict(self, policy_transaction: PolicyTransactionCommon) -> dict[str, Any]:
         """Convert PolicyTransactionCommon to dictionary."""
         return policy_transaction.model_dump(mode="json")
 
-    def _from_dict(self, data: Dict[str, Any]) -> PolicyTransactionCommon:
+    def _from_dict(self, data: dict[str, Any]) -> PolicyTransactionCommon:
         """Convert dictionary to PolicyTransactionCommon."""
         return PolicyTransactionCommon(**data)
 
-    def _matches_filters(self, item: Dict[str, Any], filters: Dict[str, Any]) -> bool:
+    def _matches_filters(self, item: dict[str, Any], filters: dict[str, Any]) -> bool:
         """Check if item matches all filters."""
         for key, value in filters.items():
             if key not in item:
@@ -64,7 +64,7 @@ class JSONFileRepository(BaseRepository[PolicyTransactionCommon]):
                 return False
         return True
 
-    async def get(self, id: str) -> Optional[PolicyTransactionCommon]:
+    async def get(self, id: str) -> PolicyTransactionCommon | None:
         """Get a policy transaction by ID."""
         data = self._read_data()
         for item in data:
@@ -73,8 +73,8 @@ class JSONFileRepository(BaseRepository[PolicyTransactionCommon]):
         return None
 
     async def list(
-        self, skip: int = 0, limit: int = 100, filters: Optional[Dict[str, Any]] = None
-    ) -> List[PolicyTransactionCommon]:
+        self, skip: int = 0, limit: int = 100, filters: dict[str, Any] | None = None
+    ) -> list[PolicyTransactionCommon]:
         """List policy transactions with pagination and filtering."""
         data = self._read_data()
 
@@ -108,7 +108,7 @@ class JSONFileRepository(BaseRepository[PolicyTransactionCommon]):
 
     async def update(
         self, id: str, item: PolicyTransactionCommon
-    ) -> Optional[PolicyTransactionCommon]:
+    ) -> PolicyTransactionCommon | None:
         """Update an existing policy transaction."""
         data = self._read_data()
 
@@ -141,7 +141,7 @@ class JSONFileRepository(BaseRepository[PolicyTransactionCommon]):
 
         return False
 
-    async def count(self, filters: Optional[Dict[str, Any]] = None) -> int:
+    async def count(self, filters: dict[str, Any] | None = None) -> int:
         """Count policy transactions matching filters."""
         data = self._read_data()
 

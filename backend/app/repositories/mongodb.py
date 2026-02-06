@@ -1,14 +1,14 @@
 """MongoDB repository implementation."""
 
-from typing import Optional, List, Dict, Any
-from datetime import datetime
 import uuid
+from datetime import datetime
+from typing import Any
 
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
 from pymongo import ASCENDING, DESCENDING
 
-from .base import BaseRepository
 from ..models.policy_transaction import PolicyTransactionCommon
+from .base import BaseRepository
 
 
 class MongoDBRepository(BaseRepository[PolicyTransactionCommon]):
@@ -30,20 +30,20 @@ class MongoDBRepository(BaseRepository[PolicyTransactionCommon]):
         """Close the database connection."""
         self.client.close()
 
-    def _to_dict(self, policy_transaction: PolicyTransactionCommon) -> Dict[str, Any]:
+    def _to_dict(self, policy_transaction: PolicyTransactionCommon) -> dict[str, Any]:
         """Convert PolicyTransactionCommon to MongoDB document."""
         doc = policy_transaction.model_dump(mode="json")
         # MongoDB uses _id instead of id
         doc["_id"] = doc.pop("id")
         return doc
 
-    def _from_dict(self, doc: Dict[str, Any]) -> PolicyTransactionCommon:
+    def _from_dict(self, doc: dict[str, Any]) -> PolicyTransactionCommon:
         """Convert MongoDB document to PolicyTransactionCommon."""
         if "_id" in doc:
             doc["id"] = str(doc.pop("_id"))
         return PolicyTransactionCommon(**doc)
 
-    def _build_filter(self, filters: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def _build_filter(self, filters: dict[str, Any] | None = None) -> dict[str, Any]:
         """Build MongoDB filter from filters dict."""
         if not filters:
             return {}
@@ -58,7 +58,7 @@ class MongoDBRepository(BaseRepository[PolicyTransactionCommon]):
 
         return mongo_filter
 
-    async def get(self, id: str) -> Optional[PolicyTransactionCommon]:
+    async def get(self, id: str) -> PolicyTransactionCommon | None:
         """Get a policy transaction by ID."""
         doc = await self.collection.find_one({"_id": id})
         if doc:
@@ -66,8 +66,8 @@ class MongoDBRepository(BaseRepository[PolicyTransactionCommon]):
         return None
 
     async def list(
-        self, skip: int = 0, limit: int = 100, filters: Optional[Dict[str, Any]] = None
-    ) -> List[PolicyTransactionCommon]:
+        self, skip: int = 0, limit: int = 100, filters: dict[str, Any] | None = None
+    ) -> list[PolicyTransactionCommon]:
         """List policy transactions with pagination and filtering."""
         mongo_filter = self._build_filter(filters)
 
@@ -102,7 +102,7 @@ class MongoDBRepository(BaseRepository[PolicyTransactionCommon]):
 
     async def update(
         self, id: str, item: PolicyTransactionCommon
-    ) -> Optional[PolicyTransactionCommon]:
+    ) -> PolicyTransactionCommon | None:
         """Update an existing policy transaction."""
         # Preserve ID and created_at
         item.id = id
@@ -128,7 +128,7 @@ class MongoDBRepository(BaseRepository[PolicyTransactionCommon]):
         result = await self.collection.delete_one({"_id": id})
         return result.deleted_count > 0
 
-    async def count(self, filters: Optional[Dict[str, Any]] = None) -> int:
+    async def count(self, filters: dict[str, Any] | None = None) -> int:
         """Count policy transactions matching filters."""
         mongo_filter = self._build_filter(filters)
         return await self.collection.count_documents(mongo_filter)
